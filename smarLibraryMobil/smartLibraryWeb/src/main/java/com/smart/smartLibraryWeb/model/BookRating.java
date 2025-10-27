@@ -1,5 +1,7 @@
 package com.smart.smartLibraryWeb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@Schema(hidden = true)
 public class BookRating {
 
     @Id
@@ -20,9 +23,11 @@ public class BookRating {
     private int rating; // 1–5 arasında
 
     @ManyToOne
+    @JsonIgnore
     private Book book;
 
     @ManyToOne
+    @JsonIgnore
     private Student student;
 
     private LocalDateTime createdAt;

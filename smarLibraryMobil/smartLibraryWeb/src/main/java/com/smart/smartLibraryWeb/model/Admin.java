@@ -1,5 +1,6 @@
 package com.smart.smartLibraryWeb.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
+@Schema(hidden = true)
 public class Admin {
 
     @Id

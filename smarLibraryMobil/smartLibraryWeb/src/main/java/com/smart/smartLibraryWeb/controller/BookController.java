@@ -3,6 +3,11 @@ package com.smart.smartLibraryWeb.controller;
 import com.smart.smartLibraryWeb.dto.bookDTO.*;
 import com.smart.smartLibraryWeb.model.Book;
 import com.smart.smartLibraryWeb.service.bookService.BookService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +19,17 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
+@Tag(name = "Book Management", description = "APIs for managing books, ratings, favorites and comments")
 public class BookController {
 
     private final BookService bookService;
 
     // Yeni kitap oluşturma
+    @Operation(summary = "Create a new book", description = "Creates a new book in the library")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Book created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
     @PostMapping
     public ResponseEntity<Void> createBook(@RequestBody BookCreateDTO createDTO) {
         bookService.createBook(createDTO);
@@ -36,6 +47,8 @@ public class BookController {
     }
 
     // Tüm kitapları listele
+    @Operation(summary = "Get all books", description = "Returns a list of all books in the library")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved books list")
     @GetMapping
     public ResponseEntity<List<BookListDTO>> getAllBooks() {
         return ResponseEntity.ok(bookService.getAllBooks());
@@ -88,6 +101,11 @@ public class BookController {
 
 
     // ⭐ Kitaba puan verme
+    @Operation(summary = "Rate a book", description = "Submit a rating (1-5 stars) for a specific book")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Rating submitted successfully"),
+            @ApiResponse(responseCode = "404", description = "Book or student not found")
+    })
     @PostMapping("/rate")
     public ResponseEntity<BookRatingResponseDTO> rateBook(@RequestBody BookRatingRequestDTO dto) {
         BookRatingResponseDTO response = bookService.rateBook(dto);

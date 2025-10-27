@@ -27,15 +27,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        // Public endpoints için filter'ı bypass et
+        return path.startsWith("/api/auth/") ||
+               path.startsWith("/api/test/") ||
+               path.startsWith("/swagger-ui") ||
+               path.startsWith("/v3/api-docs") ||
+               path.startsWith("/swagger-resources") ||
+               path.startsWith("/webjars/") ||
+               path.equals("/swagger-ui.html") ||
+               path.equals("/favicon.ico");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
-
-        // Login endpointleri için JWT kontrolünü atla
-        String requestURI = request.getRequestURI();
-        if (requestURI.contains("/api/auth/")) {
-            chain.doFilter(request, response);
-            return;
-        }
 
         final String requestTokenHeader = request.getHeader("Authorization");
 

@@ -1,6 +1,7 @@
 package com.smart.smartLibraryWeb.exception;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -25,10 +27,30 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", ex.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<?> handleNoResourceFound(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
+        // Favicon ve static resource hatalarını ignore et (404 döndür, log'lama)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", "Resource not found: " + ex.getResourcePath()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneralException(Exception ex) {
+        // GERÇEK HATAYI LOGLAYALIM!
+        log.error("❌ EXCEPTION CAUGHT: {}", ex.getClass().getName(), ex);
+        log.error("❌ ERROR MESSAGE: {}", ex.getMessage());
+        if (ex.getCause() != null) {
+            log.error("❌ CAUSED BY: {}", ex.getCause().getMessage());
+        }
+
+        // Geliştirme aşamasında gerçek hatayı döndür
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("message", "Beklenmeyen bir hata oluştu."));
+                .body(Map.of(
+                    "message", "Beklenmeyen bir hata oluştu.",
+                    "error", ex.getClass().getSimpleName(),
+                    "detail", ex.getMessage() != null ? ex.getMessage() : "No detail available",
+                    "cause", ex.getCause() != null ? ex.getCause().getMessage() : "No cause"
+                ));
     }
 
     @ExceptionHandler(ServiceException.class)

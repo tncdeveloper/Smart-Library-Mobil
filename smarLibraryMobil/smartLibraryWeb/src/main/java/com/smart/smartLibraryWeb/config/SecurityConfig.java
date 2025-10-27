@@ -47,8 +47,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/student/login", "/api/auth/student/register").permitAll()
                         .requestMatchers("/api/auth/admin/login").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("api/test/**").permitAll()
+                        .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/error").permitAll()
+
+                        // Swagger/OpenAPI endpoints
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/webjars/**").permitAll()
+
+                        // Static resources
+                        .requestMatchers("/favicon.ico", "/favicon.png", "/static/**", "/css/**", "/js/**", "/images/**").permitAll()
 
                         // Student endpoints - TÜM HTTP metodları için
                         .requestMatchers("/api/students/**").hasRole("STUDENT")

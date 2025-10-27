@@ -1,5 +1,6 @@
 package com.smart.smartLibraryWeb.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@Schema(hidden = true)
 public class Student {
 
     @Id
